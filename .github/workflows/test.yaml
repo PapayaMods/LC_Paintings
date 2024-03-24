@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Set env
         run: |
-          echo "BUILD_DIR=${GITHUB_WORKSPACE}/build/contents" >> $GITHUB_ENV
+          echo "BUILD_DIR=${GITHUB_WORKSPACE}/build" >> $GITHUB_ENV
           echo "PKG_CONTENTS=${GITHUB_WORKSPACE}/build/contents" >> $GITHUB_ENV
           echo "PKG_ZIP=${GITHUB_WORKSPACE}/build/pkg.zip" >> $GITHUB_ENV
 
@@ -24,7 +24,7 @@ jobs:
           path: ${{ env.BUILD_DIR }}
 
       - name: Unzip modpack
-        run: unzip ${{ env.BUILD_PKG }} -d ${{ env.PKG_CONTENTS }}
+        run: unzip ${{ env.PKG_ZIP }} -d ${{ env.PKG_CONTENTS }}
 
       - name: Simple JSON validation
         run: jq '.' ${{ env.PKG_CONTENTS }}/manifest.json
