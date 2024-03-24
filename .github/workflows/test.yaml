@@ -10,6 +10,7 @@ jobs:
     steps:
       - name: Set env
         run: |
+          echo "BUILD_DIR=${GITHUB_WORKSPACE}/build/contents" >> $GITHUB_ENV
           echo "PKG_CONTENTS=${GITHUB_WORKSPACE}/build/contents" >> $GITHUB_ENV
           echo "PKG_ZIP=${GITHUB_WORKSPACE}/build/pkg.zip" >> $GITHUB_ENV
 
