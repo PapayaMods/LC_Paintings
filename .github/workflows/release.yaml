@@ -14,8 +14,8 @@ jobs:
     steps:
       - name: Set env
         run: |
-          echo "BUILD_DIR=build" >> $GITHUB_ENV
-          echo "BUILD_PKG=build/modpack.zip" >> $GITHUB_ENV
+          echo "BUILD_DIR=${GITHUB_WORKSPACE}/build" >> $GITHUB_ENV
+          echo "PKG_ZIP=${GITHUB_WORKSPACE}/build/pkg.zip" >> $GITHUB_ENV
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -27,7 +27,7 @@ jobs:
         uses: GreenTF/upload-thunderstore-package@v4.3
         with:
           namespace: PapayaMods # the thunderstore 'team' to publish under
-          file: ${{ env.BUILD_PKG }}
+          file: ${{ env.PKG_ZIP }}
           token: ${{ secrets.THUNDERSTORE_PROD_API_TOKEN }}
           name: ${{ github.event.repository.name }} # the name of the package
           version: ${{ github.ref_name }} # Use the tag as the package version
