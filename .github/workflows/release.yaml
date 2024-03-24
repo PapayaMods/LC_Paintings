@@ -23,7 +23,7 @@ jobs:
           namespace: PapayaMods # the thunderstore 'team' to publish under
           file: pkg.zip
           token: ${{ secrets.THUNDERSTORE_PROD_API_TOKEN }}
-          name: ${{ github.event.repository.name }} # the name of the package
+          name: Pictures
           version: ${{ github.ref_name }} # Use the tag as the package version
           community: lethal-company
           repo: northstar.thunderstore.io
