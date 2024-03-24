@@ -21,10 +21,10 @@ jobs:
         uses: GreenTF/upload-thunderstore-package@v4.3
         with:
           namespace: PapayaMods # the thunderstore 'team' to publish under
-          file: "pkg.zip"
-          token: "${{ secrets.THUNDERSTORE_PROD_API_TOKEN }}"
+          file: pkg.zip
+          token: ${{ secrets.THUNDERSTORE_PROD_API_TOKEN }}
           name: Pictures
-          version: "${{ github.ref_name }}" # Use the tag as the package version
+          version: ${{ github.ref_name }} # Use the tag as the package version
           community: lethal-company
           repo: northstar.thunderstore.io
           categories: |
