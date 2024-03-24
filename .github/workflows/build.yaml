@@ -8,6 +8,10 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - uses: hecrj/setup-rust-action@v2
+        with:
+          rust-version: 1.77.0
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -30,16 +34,28 @@ jobs:
             version_number=${{ github.ref_name }}
             website_url=${{ github.server_url }}/${{ github.repository }}
 
-      - name: Copy sources
+      - name: Check out lpg
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.event.repository.organization }}/lpg
+          path: ./lpg
+
+      - name: Build image artifacts
+        run: |
+          cargo run --manifest-path ./lpg/Cargo.toml -- \
+            --templates ./lpg/templates \
+            --input images \
+            --output ${{ env.BUILD_SRC }}
+
+      - name: Copy remaining mod artifacts into build directory
         run: |
           cp icon.png ${{ env.BUILD_SRC }}
           cp README.md ${{ env.BUILD_SRC }}
-          cp -r BepInEx ${{ env.BUILD_SRC }}
 
       - name: Build deliverable
         run: zip -j -r ${{ env.BUILD_PKG }} ${{ env.BUILD_SRC }}/*
 
-      - name: Upload artifacts
+      - name: Upload GHA artifacts
         uses: actions/upload-artifact@v4
         with:
           name: package
