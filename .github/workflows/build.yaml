@@ -8,41 +8,58 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - uses: hecrj/setup-rust-action@v2
+        with:
+          rust-version: 1.77.0
+
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set env
         run: |
-          echo "BUILD_SRC=build/src" >> $GITHUB_ENV
-          echo "BUILD_PKG=build/modpack.zip" >> $GITHUB_ENV
+          echo "PKG_CONTENTS=${GITHUB_WORKSPACE}/build/contents" >> $GITHUB_ENV
+          echo "PKG_ZIP=${GITHUB_WORKSPACE}/build/pkg.zip" >> $GITHUB_ENV
 
       - name: Create build directory structure
-        run: mkdir -p ${{ env.BUILD_SRC }}
+        run: mkdir -p ${{ env.PKG_CONTENTS }}
 
       - name: Template manifest.json
         uses: cuchi/jinja2-action@v1.2.2
         with:
           template: manifest.json.j2
-          output_file: ${{ env.BUILD_SRC }}/manifest.json
+          output_file: ${{ env.PKG_CONTENTS }}/manifest.json
           strict: true
           variables: |
             name=${{ github.event.repository.name }}
             version_number=${{ github.ref_name }}
             website_url=${{ github.server_url }}/${{ github.repository }}
 
-      - name: Copy sources
+      - name: Check out lpg
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.event.repository.organization }}/lpg
+          path: ./lpg
+
+      - name: Build image artifacts
         run: |
-          cp icon.png ${{ env.BUILD_SRC }}
-          cp README.md ${{ env.BUILD_SRC }}
-          cp -r BepInEx ${{ env.BUILD_SRC }}
+          cargo run --manifest-path ./lpg/Cargo.toml -- \
+            --templates ./lpg/templates \
+            --input images \
+            --output ${{ env.PKG_CONTENTS }}
+
+      - name: Copy remaining mod artifacts into build directory
+        run: |
+          cp icon.png ${{ env.PKG_CONTENTS }}
+          cp README.md ${{ env.PKG_CONTENTS }}
 
       - name: Build deliverable
-        run: zip -j -r ${{ env.BUILD_PKG }} ${{ env.BUILD_SRC }}/*
+        working-directory: ${{ env.PKG_CONTENTS }}
+        run: zip -r ${{ env.PKG_ZIP }} *
 
-      - name: Upload artifacts
+      - name: Upload GHA artifacts
         uses: actions/upload-artifact@v4
         with:
           name: package
-          path: ${{ env.BUILD_PKG }}
+          path: ${{ env.PKG_ZIP }}
           if-no-files-found: error
           overwrite: false

@@ -10,12 +10,12 @@ jobs:
     steps:
       - name: Set env
         run: |
-          echo "BUILD_DIR=build" >> $GITHUB_ENV
-          echo "BUILD_PKG=build/modpack.zip" >> $GITHUB_ENV
-          echo "UNZIPPED_DIR=unzipped" >> $GITHUB_ENV
+          echo "BUILD_DIR=${GITHUB_WORKSPACE}/build" >> $GITHUB_ENV
+          echo "PKG_CONTENTS=${GITHUB_WORKSPACE}/build/contents" >> $GITHUB_ENV
+          echo "PKG_ZIP=${GITHUB_WORKSPACE}/build/pkg.zip" >> $GITHUB_ENV
 
       - name: Create unzip destination directory
-        run: mkdir -p ${{ env.UNZIPPED_DIR }}
+        run: mkdir -p ${{ env.PKG_CONTENTS }}
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -24,13 +24,13 @@ jobs:
           path: ${{ env.BUILD_DIR }}
 
       - name: Unzip modpack
-        run: unzip ${{ env.BUILD_PKG }} -d ${{ env.UNZIPPED_DIR }}
+        run: unzip ${{ env.PKG_ZIP }} -d ${{ env.PKG_CONTENTS }}
 
       - name: Simple JSON validation
-        run: jq '.' ${{ env.UNZIPPED_DIR }}/manifest.json
+        run: jq '.' ${{ env.PKG_CONTENTS }}/manifest.json
 
       - name: Check presence of icon.png
-        run: test -f ${{ env.UNZIPPED_DIR }}/icon.png
+        run: test -f ${{ env.PKG_CONTENTS }}/icon.png
 
       - name: Check presence of README.md
-        run: test -f ${{ env.UNZIPPED_DIR }}/README.md
+        run: test -f ${{ env.PKG_CONTENTS }}/README.md
