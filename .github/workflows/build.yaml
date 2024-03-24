@@ -17,8 +17,8 @@ jobs:
 
       - name: Set env
         run: |
-          echo "PKG_CONTENTS=~/build/contents" >> $GITHUB_ENV
-          echo "PKG_ZIP=~/build/pkg.zip" >> $GITHUB_ENV
+          echo "PKG_CONTENTS=${{ GITHUB_WORKSPACE }}/build/contents" >> $GITHUB_ENV
+          echo "PKG_ZIP=${{ GITHUB_WORKSPACE }}/build/pkg.zip" >> $GITHUB_ENV
 
       - name: Create build directory structure
         run: mkdir -p ${{ env.PKG_CONTENTS }}
