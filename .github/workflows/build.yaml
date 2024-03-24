@@ -17,8 +17,8 @@ jobs:
 
       - name: Set env
         run: |
-          echo "BUILD_SRC=build/src" >> $GITHUB_ENV
-          echo "BUILD_PKG=build/modpack.zip" >> $GITHUB_ENV
+          echo "BUILD_SRC=~/build/src" >> $GITHUB_ENV
+          echo "BUILD_PKG=~/build/pkg.zip" >> $GITHUB_ENV
 
       - name: Create build directory structure
         run: mkdir -p ${{ env.BUILD_SRC }}
@@ -53,7 +53,8 @@ jobs:
           cp README.md ${{ env.BUILD_SRC }}
 
       - name: Build deliverable
-        run: zip -j -r ${{ env.BUILD_PKG }} ${{ env.BUILD_SRC }}/*
+        working-directory: ${{ env.BUILD_SRC }}
+        run: zip -r ${{ env.BUILD_PKG }} *
 
       - name: Upload GHA artifacts
         uses: actions/upload-artifact@v4
