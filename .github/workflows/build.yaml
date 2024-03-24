@@ -37,7 +37,7 @@ jobs:
       - name: Check out lpg
         uses: actions/checkout@v3
         with:
-          repository: ${{ github.event.repository.organization }}/lpg
+          repository: PapayaMods/lpg
           path: ./lpg
 
       - name: Build image artifacts
